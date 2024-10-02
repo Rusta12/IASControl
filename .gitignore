@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.py[cod]
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Лог-файлы
+*.log
