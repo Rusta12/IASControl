@@ -7,7 +7,7 @@ def read_report():
 	file_name = r"C:/DataIAS/Список спортмероприятий.xlsx"
 	xls = pd.ExcelFile(file_name) 
 	df = pd.read_excel(xls, 'Список спортмероприятий')
-	df.iloc[:,1] = ''
+	df['IASControl'] = ''
 	return df
 
 

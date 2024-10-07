@@ -1,6 +1,6 @@
 #Добавление комментария для отклонения
 def input_report_text(df, report_text=''):
-    df.iloc[:,1] = df.iloc[:,1].apply(lambda x: x + f'{report_text}. ')
+    df['IASControl'] = df['IASControl'].apply(lambda x: x + f'{report_text}. ')
     return df
 
 
