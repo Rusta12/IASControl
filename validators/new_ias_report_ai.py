@@ -1,6 +1,7 @@
 import pandas as pd
 #Модули
 from validators.responsible.responsible_main import responsible_main_concat 
+from validators.triggers.triggers_main import triggers_main_concat
 
 #Загрузка отчета!
 def read_report():
@@ -45,13 +46,19 @@ def chek_file_deviation(df):
 	print('Файл обновлен - ', file_name)
 	return
 
+def concat_all_report(df):
+	dftmp1 = responsible_main_concat(df)
+	dftmp2 = triggers_main_concat(df)
+	df_concat = pd.concat([dftmp1, dftmp2])
+	return df_concat
+
 
 #Сохроняем файлы для обработки в ИАС Спорт
 def save_file_DataIAS(name_file):
 	#Загрузка файла
 	df = read_report()
 	#Мероприятия каоторые не прошли проверку
-	dftmp = responsible_main_concat(df)
+	dftmp = concat_all_report(df)
 	#Убирамем мероприятия которые не прошли проверку из общего списка
 	df_unique = df[~df.iloc[:, 0].isin(dftmp.iloc[:, 0])]
 	#Заполняем список для отклонения

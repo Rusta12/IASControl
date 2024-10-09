@@ -1,18 +1,17 @@
 import pandas as pd
 #Модули
-from validators.collectiv_def import input_report_text, search_msk, search_rf
+from validators.collectiv_def import input_report_text, search_msk, search_rf, search_region, IASControl_comment
 
 
 #Без отвественных за проведение где больше 300
 def responsible_for_conducting(df):
-    df = df[(df['Место проведения'].str.contains(
-        'Москва', case=False, na=False
-    ))] 
+    name_region = '|'.join(search_region)
+    df = df[df['Место проведения'].str.contains(name_region, case=False, na=False)]
     df = df[(df['Кол. участ.'] >= 300)]
     df = df[~(df['Ответственные лица'].str.contains(
         'Ответ. за проведение', case=False, na=False
     ))]
-    report_text = 'Укажите пожалуйста Ответ. за проведение и его контакт (поле находится в блоке - Организаторы)'
+    report_text = IASControl_comment['responsible'][0]
     df = input_report_text(df, report_text)
     return df
 
@@ -25,7 +24,7 @@ def responsible_for_rank(df):
     df = df[~(df['Ответственные лица'].str.contains(
         'Ответ. за проведение', case=False, na=False
     ))]
-    report_text = 'Укажите пожалуйста Ответ. за проведение и его контакт (поле находится в блоке - Организаторы)'
+    report_text = IASControl_comment['responsible'][1]
     df = input_report_text(df, report_text)
     return df
 
@@ -40,7 +39,7 @@ def responsible_for_rf(df):
     df = df[~(df['Ответственные лица'].str.contains(
         'Ответ. за проведение', case=False, na=False
     ))]
-    report_text = 'Укажите пожалуйста Ответ. за проведение в г. Москве и его контакт (поле находится в блоке - Организаторы)'
+    report_text = IASControl_comment['responsible'][2]
     df = input_report_text(df, report_text)
     return df
 
@@ -53,7 +52,7 @@ def responsible_for_contact(df):
     df = df[~(df['Ответственные лица'].str.contains(
         pattern, case=False, na=False
     ))]
-    report_text = 'Обновите(отредактируйте) пожалуйста Ответ. за проведение и его контакт (поле находится в блоке - Организаторы)'
+    report_text = IASControl_comment['responsible'][3]
     df = input_report_text(df, report_text)
     return df
 
