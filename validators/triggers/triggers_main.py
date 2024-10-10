@@ -1,12 +1,13 @@
 import pandas as pd
+import re
 #Модули
 from validators.collectiv_def import input_report_text, search_open
 from validators.collectiv_def import search_region, IASControl_comment
 from validators.collectiv_def import search_status, search_festival
-from validators.collectiv_def import search_outdoors, search_dep
+from validators.collectiv_def import search_outdoors, search_students
 
 #Поиск по открытым наименованияммероприятий
-def filtred_open_events(df):
+def filtred_open_events(df, excel_file_path):
     name_event = '|'.join(search_open)
     name_region = '|'.join(search_region)
     df_filtered = df[
@@ -14,11 +15,11 @@ def filtred_open_events(df):
         df['Наименование мероприятия'].str.contains(name_event, case=False, na=False)
     ]
     report_text = IASControl_comment['triggers'][0]
-    df = input_report_text(df_filtered, report_text)
-    return df
+    input_report_text(df_filtered, excel_file_path, report_text)
+    return
 
 #Поиск по статусам и наименованиям не для Москвы
-def filtred_status_events(df):
+def filtred_status_events(df, excel_file_path):
     name_status = '|'.join(search_status)
     name_region = '|'.join(search_region)
     df_filtered = df[
@@ -26,21 +27,21 @@ def filtred_status_events(df):
         df['Статус мероприятия'].str.contains(name_status, case=False, na=False) 
     ]
     report_text = IASControl_comment['triggers'][1]
-    df = input_report_text(df_filtered, report_text)
-    return df
+    input_report_text(df_filtered, excel_file_path, report_text)
+    return
 
 #Поиск по наименованиям студентческие мероприятия
-def filtred_students_events(df):
-    name_students = '|'.join(search_status)
+def filtred_students_events(df, excel_file_path):
+    name_students = '|'.join(search_students)
     df_filtered = df[
-        df['Наименование мероприятия'].str.contains(search_status, case=False, na=False)
+        df['Наименование мероприятия'].str.contains(name_students, case=False, na=False)
     ]
     report_text = IASControl_comment['triggers'][2]
-    df = input_report_text(df_filtered, report_text)
-    return df
+    input_report_text(df_filtered, excel_file_path, report_text)
+    return
 
 #Поиск по наименованию фестевальных мероприятий
-def filtred_festival_events(df):
+def filtred_festival_events(df, excel_file_path):
     name_festival = '|'.join(search_festival)
     name_region = '|'.join(search_region)
     df_filtered = df[
@@ -48,38 +49,42 @@ def filtred_festival_events(df):
         df['Наименование мероприятия'].str.contains(name_festival, case=False, na=False)
     ]
     report_text = IASControl_comment['triggers'][3]
-    df = input_report_text(df_filtered, report_text)
-    return df
+    input_report_text(df_filtered, excel_file_path, report_text)
+    return
 
 
 #Поиск мероприятий на дворовой территории
-def filtred_outdoors_events(df):
-    name_outdoors = '|'.join(search_outdoors)
+def filtred_outdoors_events(df, excel_file_path):
+    name_pattern = '|'.join(search_outdoors)
     df_filtered = df[
-        df['Место проведения'].str.contains(name_outdoors, case=False, na=False) 
+        df['Место проведения'].str.contains(name_pattern, case=False, na=False) 
     ]
+    # Если фильтрация не вернула данных
+    if df_filtered.empty:
+        return
     report_text = IASControl_comment['triggers'][4]
-    df = input_report_text(df_filtered, report_text)
-    return df
+    input_report_text(df_filtered, excel_file_path, report_text)
+    return
 
-#Поиск мероприятий на дворовой территории
-def filtred_mks_events(df):
-    name_outdoors = '|'.join(search_dep)
+#Поиск мероприятий где организатор Москомспорт
+def filtred_mks_events(df, excel_file_path):
+    name_pattern = 'Москомспорт.'
     df_filtered = df[
-        df['Состав организаторов'].str.contains(name_outdoors, case=False, na=False) 
+        df['Состав организаторов'].str.contains(name_pattern, case=False, na=False) &
+        df['Состав организаторов'].str.contains('\.', case=False, na=False) &
+        ~df['Состав организаторов'].str.contains('Москомспорта', case=False, na=False)
     ]
-    report_text = IASControl_comment['triggers'][4]
-    df = input_report_text(df_filtered, report_text)
-    return df
-
+    report_text = IASControl_comment['triggers'][5]
+    input_report_text(df_filtered, excel_file_path, report_text)
+    return
 
 #Общая проверка по отвественным.
-def triggers_main_concat(df):
-    df1 = filtred_open_events(df)
-    df2 = filtred_status_events(df)
-    df3 = filtred_students_events(df)
-    df4 = filtred_festival_events(df)
-    df5 = filtred_outdoors_events(df)
-    df6 = filtred_mks_events(df)
-    df_concat = pd.concat([df1, df2, df3, df4, df5, df6])
-    return df_concat
+def triggers_main_concat(df, excel_file_path):
+    filtred_open_events(df, excel_file_path)
+    filtred_status_events(df, excel_file_path)
+    filtred_students_events(df, excel_file_path)
+    filtred_festival_events(df, excel_file_path)
+    filtred_outdoors_events(df, excel_file_path)
+    filtred_mks_events(df, excel_file_path)
+    print('Общая проверка по триггерам успешно пройдена!')
+    return

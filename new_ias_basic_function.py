@@ -308,7 +308,7 @@ def fix_razdel(name_razdel:str):
 def list_application(df, fun_name:str, razdel, name_agree=None):
    for index, row in df.iterrows():
       i = int(row['Реестр №'])
-      comment = str(row['Комментарий АИ'])
+      comment = str(row['IASControl'])
       print(f'{index} из {df.iloc[-1].name}')
       print('===', i, '===')
       hrefList = []

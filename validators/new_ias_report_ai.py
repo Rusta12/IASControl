@@ -11,20 +11,34 @@ def read_report():
 	df['IASControl'] = ''
 	return df
 
+#Сохраняем для анализа в Excel
+def save_dfiascontrol(df):
+	excel_file_path = r"C:/DataIAS/Список спортмероприятий IASControl.xlsx"
+	df.to_excel(excel_file_path, index=False)
+	print(f'Файл обновлен - {excel_file_path}')
+	return excel_file_path
 
+def load_dfiascontrol(excel_file_path):
+	xls = pd.ExcelFile(excel_file_path) 
+	df = pd.read_excel(xls, 'Sheet1')
+	return df
 
 def chek_file_save(df, name_file):
-    file_name = fr"C:/DataIAS/Список спортмероприятий ({name_file}).xlsx"
-    xls = pd.ExcelFile(file_name) 
-    dfx = pd.read_excel(xls, 'Sheet1')
-    if dfx.shape[0] == 0:
-        df.iloc[:, [0, 1]].to_excel(file_name, index=False)
-    elif dfx.shape[0] >= 1:
-        df = pd.concat([dfx, df])
-        df.iloc[:, [0, 1]].to_excel(file_name, index=False)
-    else:
-        pass
-    print('Файл обновлен - ', file_name)
+	file_name = fr"C:/DataIAS/Список спортмероприятий ({name_file}).xlsx"
+	xls = pd.ExcelFile(file_name) 
+	dfx = pd.read_excel(xls, 'Sheet1')
+	if dfx.shape[0] == 0:
+		df.iloc[:, [0, 17]].to_excel(file_name, index=False)
+	else:
+		# Если есть данные, обновляем комментарии, где номера совпадают
+		dfx = dfx.set_index('Реестр №')
+		df = df.set_index('Реестр №')
+		# Объединяем данные: заменяем существующие и добавляем новые
+		dfx.update(df)
+		df_final = pd.concat([dfx, df[~df.index.isin(dfx.index)]])
+		# Сохраняем результат в Excel
+		df_final.iloc[:, [0]].to_excel(file_name, index=False)
+	print('Файл обновлен - ', file_name)
 
 
 def chek_file_deviation(df):
@@ -32,37 +46,49 @@ def chek_file_deviation(df):
 		print('Замечаний для отклонения не обнаружено')
 		return
 	else:
-		pass
-	file_name = r"C:/DataIAS/Список спортмероприятий (отклонение).xlsx"
-	xls = pd.ExcelFile(file_name)
-	dfx = pd.read_excel(xls, 'Sheet1')
-	if dfx.shape[0] == 0:
-		df.iloc[:, [0, 1]].to_excel(file_name, index=False)
-	elif dfx.shape[0] >= 1:
-		df = pd.concat([dfx, df])
-		df.iloc[:, [0, 1]].to_excel(file_name, index=False)
-	else:
-		pass
-	print('Файл обновлен - ', file_name)
-	return
+		file_name = r"C:/DataIAS/Список спортмероприятий (отклонение).xlsx"
+		xls = pd.ExcelFile(file_name)
+		dfx = pd.read_excel(xls, 'Sheet1')
+		# Проверяем, есть ли данные в загруженной таблице
+		if dfx.shape[0] == 0:
+			# Если таблица пустая, просто сохраняем новый DataFrame
+			df.iloc[:, [0, 17]].to_excel(file_name, index=False)
+		else:
+			# Если есть данные, обновляем комментарии, где номера совпадают
+			dfx = dfx.set_index('Реестр №')
+			df = df.set_index('Реестр №')
+			
+			# Объединяем данные: заменяем существующие и добавляем новые
+			dfx.update(df)
+			df_final = pd.concat([dfx, df[~df.index.isin(dfx.index)]])
+			
+			# Сохраняем результат в Excel
+			df_final[[0, 17]].reset_index().to_excel(file_name, index=False)
+		print('Файл обновлен - ', file_name)
+		return
 
-def concat_all_report(df):
-	dftmp1 = responsible_main_concat(df)
-	dftmp2 = triggers_main_concat(df)
-	df_concat = pd.concat([dftmp1, dftmp2])
-	return df_concat
+#Сводная функция дял проверки
+def concat_all_report(df, excel_file_path):
+	responsible_main_concat(df, excel_file_path)
+	triggers_main_concat(df, excel_file_path)
+	print('Все проверки пройдены')
+	return
 
 
 #Сохроняем файлы для обработки в ИАС Спорт
 def save_file_DataIAS(name_file):
 	#Загрузка файла
 	df = read_report()
+	#Сохраняем для анализа в Excel
+	excel_file_path = save_dfiascontrol(df)
 	#Мероприятия каоторые не прошли проверку
-	dftmp = concat_all_report(df)
-	#Убирамем мероприятия которые не прошли проверку из общего списка
-	df_unique = df[~df.iloc[:, 0].isin(dftmp.iloc[:, 0])]
+	concat_all_report(df, excel_file_path)
+	dfiascontrol = load_dfiascontrol(excel_file_path)
+	# Фильтрация строк, где поле 'Комментарий IASControl' не пустое
+	df_deviation= dfiascontrol[dfiascontrol['IASControl'].notna() & (dfiascontrol['IASControl'] != '')]
 	#Заполняем список для отклонения
-	chek_file_deviation(dftmp)
+	chek_file_deviation(df_deviation)
 	#Заполняем файл файл для соглосования.
+	df_unique = dfiascontrol[dfiascontrol['IASControl'].isna() | (dfiascontrol['IASControl'] == '')]
 	chek_file_save(df_unique, name_file)
 	return df_unique

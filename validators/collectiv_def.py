@@ -1,3 +1,5 @@
+import pandas as pd
+
 
 search_msk = [
     'Чемпионат Москвы', 
@@ -29,8 +31,6 @@ search_region = ['Москва', 'Москвы']
 
 search_outdoors = ['дворовая территория']
 
-search_dep = ['Москомспорт.']
-
 
 #Коментарии IASControl
 IASControl_comment = {
@@ -51,7 +51,27 @@ IASControl_comment = {
 }
 
 #Добавление комментария для отклонения
-def input_report_text(df, report_text=''):
-    df['IASControl'] = df['IASControl'].apply(lambda x: x + f'{report_text}. ')
-    return df
+def input_report_text(df, excel_file_path, report_text=''):
+    #Новый DataFrame пуст. Обновление не требуется.
+    if df.empty:
+        return
+    #df['IASControl'] = df['IASControl'].apply(lambda x: x + f'{report_text}. ')
+    df_excel = pd.read_excel(excel_file_path)
+    df_excel['IASControl'].fillna('', inplace=True)
+    # Обновляем комментарии для совпадающих записей по полю "Реестр №"
+    for index, row in df.iterrows():
+        reestr_number = row['Реестр №']
+        comment = row['IASControl']
+        # Проверяем, есть ли запись с таким номером в загруженном df
+        match_index = df_excel[df_excel['Реестр №'] == reestr_number].index
+        if not match_index.empty:
+            # Обновляем комментарий в загруженном df
+            df_excel.at[match_index[0], 'IASControl'] = comment + f' {report_text}.'
+        else:
+            # Добавляем новые записи, если номера нет
+            df_excel = pd.concat([df_excel, pd.DataFrame([row])], ignore_index=True)
+    # Сохраняем обновленный DataFrame в Excel
+    df_excel.to_excel(excel_file_path, index=False)
+    return
+
 
