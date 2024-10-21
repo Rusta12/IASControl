@@ -2,6 +2,9 @@ import pandas as pd
 #Модули
 from validators.responsible.responsible_main import responsible_main_concat 
 from validators.triggers.triggers_main import triggers_main_concat
+from validators.status.status_main import status_main_concat
+from validators.sports.sports_main import sports_main_concat
+
 
 #Загрузка отчета!
 def read_report():
@@ -71,6 +74,8 @@ def chek_file_deviation(df):
 def concat_all_report(df, excel_file_path):
 	responsible_main_concat(df, excel_file_path)
 	triggers_main_concat(df, excel_file_path)
+	status_main_concat(df, excel_file_path)
+	sports_main_concat(df, excel_file_path)
 	print('Все проверки пройдены')
 	return
 
