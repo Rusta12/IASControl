@@ -179,6 +179,7 @@ def expand_event():
    driver.implicitly_wait(30)
    driver.find_element(By.XPATH, "//datatable-body-cell/div[1]/div[1]/img[1]").click()
    driver.implicitly_wait(30)
+   time.sleep(1)
    driver.find_element(By.XPATH, "//div[contains(text(),'Развернуть')]").click()
    time.sleep(1)
    return
