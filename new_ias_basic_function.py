@@ -114,6 +114,24 @@ def filter_change(name_status):
    time.sleep(1)
    return
 
+   # Выбор статуса заявки
+def filter_approve(name_status):
+   filter_button()
+   driver.implicitly_wait(30)
+   driver.find_element(By.XPATH, "//div[contains(text(),'Заявки')]").click()
+   time.sleep(1)
+   driver.implicitly_wait(35)
+   driver.find_element(By.XPATH, "//div[contains(text(),'Статус заявки')]").click()
+   time.sleep(1)
+   driver.implicitly_wait(35)
+   calendar = driver.find_element(By.XPATH, f"//span[contains(text(),'{name_status}')]")
+   calendar.click()
+   time.sleep(1)
+   clearFilter_enter = driver.find_element(By.XPATH, "//button[contains(text(),'Применить')]")
+   clearFilter_enter.send_keys(Keys.ENTER)
+   time.sleep(1)
+   return
+
 #Выбрать статус мероприятия в ЕКП
 def status_sport():
    filter_button('мероприятия')

@@ -35,6 +35,23 @@ def commission_application(name_period: int, df):
    ias.list_application(df, 'agree_event', 'заявки', 'на комиссию')
    return ias.nan_application
 
+#Функция утверждения мероприятий
+def commission_approve(name_period: int, df):
+	#========= Вход
+   ias.come_application(login_b, pass_b)
+   #======== Вход в раздел заявок
+   ias.come_section_application()
+   #======= Фильтр чистка
+   ias.clear_filters('заявки')
+   #======= Фильтр календаря
+   ias.filter_application(name_period, 'заявки')
+   #======= Фильтр проверено - включение
+   ias.filter_approve('на комиссию')
+   #======= Цикл перебора мероприятий
+   ias.list_application(df, 'agree_event', 'заявки', 'согласовано комиссией')
+   return ias.nan_application
+
+
 #Функция отклонений по причине ... 
 def deviation(name_period: int, df):
    #========= Вход
