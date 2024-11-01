@@ -59,15 +59,18 @@ def calendar_status(status=None):
         return
     
     
-def calendar_typefin(typefin=None):
-    if typefin:
+def calendar_typefin(typefin_list=None):
+    if typefin_list:
         driver.find_element(By.XPATH,"//input[@id='rvMain_ctl04_ctl13_txtValue']").click()
         time.sleep(1)
         # Кликаем по чекбоксу через JavaScript
         checkbox = driver.find_element(By.ID, "rvMain_ctl04_ctl13_divDropDown_ctl00")
         driver.execute_script("arguments[0].click();", checkbox)
         driver.implicitly_wait(10)
-        driver.find_element(By.XPATH,f"//label[contains(text(),'{typefin}')]").click()
+        time.sleep(1)
+        for typefin in typefin_list:
+            driver.find_element(By.XPATH,f"//label[contains(text(),'{typefin}')]").click()
+            driver.implicitly_wait(5)
     else:
         return
 
@@ -89,14 +92,16 @@ def calendar_reload():
             break
         except:
             pass
+    driver.close()
+    return
 
 
-def CalendarSchoolSportFinans(period, razdel, status=None, typefin=None):
+def CalendarSchoolSportFinans(period, razdel, status, typefin_list):
     calendar_fin_report(login_b, pass_b)
+    calendar_typefin(typefin_list)
+    calendar_status(status)
     calendar_period(period)
     calendar_razdel(razdel)
-    calendar_status(status)
-    calendar_typefin(typefin)
     calendar_reload()
-    driver.close()
+    time.sleep(5)
     return
