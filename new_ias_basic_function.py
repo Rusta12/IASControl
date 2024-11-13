@@ -252,59 +252,51 @@ def agree_paty():
    time.sleep(5)
    driver.implicitly_wait(50)
    elements_button = driver.find_elements(By.CLASS_NAME, "mat-menu-trigger")
-   #elements_button = driver.find_elements(By.CSS_SELECTOR, "span.icon-hamburger_outline")
    elements_text = driver.find_elements(By.XPATH, "//tbody[@class='ng-star-inserted']")
    print(len(elements_button))
    text =''
    for i in elements_text:
       text += i.text +"\n"
    pattern = re.compile(r'\(утверждена\)|\(на согласование\)|\(проект\)|\(архив\)')
-   #values_in_brackets = re.findall(r'\((.*?)\)', text)
    values_in_brackets =re.findall(pattern, text)
-   result_list = []
    for idx, value in enumerate(values_in_brackets, 0):
       print(idx, value)
       if value == '(на согласование)':
-         result_list.append(idx)
+         el_status = idx
+         driver.execute_script("window.scrollTo(0, 5000)")
+         time.sleep(1)
+         driver.implicitly_wait(50)
+         print(el_status)
+         elements_button[el_status].click()
+
+         button = driver.find_element(By.LINK_TEXT,'Редактировать статус участия')
+         button.click()
+         driver.implicitly_wait(30)
+         input_status = driver.find_element(By.XPATH, '//input[@aria-autocomplete="list"]')
+         print('Элемент найден!')
+         driver.implicitly_wait(55)
+         time.sleep(2)
+         try:
+               input_status.click()
+               time.sleep(1)
+               try:
+                  accept = driver.find_element(By.XPATH, "//span[contains(text(),'утверждена')]")
+                  accept.click()
+                  time.sleep(1)
+                  driver.implicitly_wait(15)
+                  accept = driver.find_element(By.XPATH, "//button[contains(text(),'Сохранить')]")
+                  accept.click()
+                  print('Участие соглосованно')
+               except:
+                  cancel = driver.find_element(By.XPATH, "//button[contains(text(),'Отменить')]")
+                  cancel.click()
+                  pass
+         except:
+               print(el_status, ' Ошибка соглосования элемента!')
+               pass
       else:
          pass
-   print(result_list, ' Это список согла!')
-   time.sleep(2)
-   #Дальше сделать отдельной функццией!
-   for el_status in result_list:
-      driver.execute_script("window.scrollTo(0, 5000)")
-      time.sleep(1)
-      driver.implicitly_wait(50)
-      print(el_status)
-      elements_button[el_status].click()
-      #el_status.click()
-      button = driver.find_element(By.LINK_TEXT,'Редактировать статус участия')
-      button.click()
-      driver.implicitly_wait(30)
-      input_status = driver.find_element(By.XPATH, '//input[@aria-autocomplete="list"]')
-      print('Элемент найден!')
-      driver.implicitly_wait(55)
-      time.sleep(2)
-      try:
-         input_status.click()
-         time.sleep(1)
-         try:
-            accept = driver.find_element(By.XPATH, "//span[contains(text(),'утверждена')]")
-            accept.click()
-            time.sleep(1)
-            driver.implicitly_wait(15)
-            accept = driver.find_element(By.XPATH, "//button[contains(text(),'Сохранить')]")
-            accept.click()
-            print('Участие соглосованно')
-         except:
-            cancel = driver.find_element(By.XPATH, "//button[contains(text(),'Отменить')]")
-            cancel.click()
-            pass
-      except:
-         print(el_status, ' Ошибка соглосования элемента!')
-         pass
-   return
-
+      
 
 #Изменения основного раздела
 def fix_razdel(name_razdel:str):

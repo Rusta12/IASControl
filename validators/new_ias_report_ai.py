@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 #Модули
 from validators.responsible.responsible_main import responsible_main_concat 
 from validators.triggers.triggers_main import triggers_main_concat
@@ -42,33 +43,8 @@ def chek_file_save(df, name_file):
 		# Сохраняем результат в Excel
 		df_final.iloc[:, [0]].to_excel(file_name, index=False)
 	print('Файл обновлен - ', file_name)
+	return
 
-
-def chek_file_deviation(df):
-	if df.shape[0] == 0:
-		print('Замечаний для отклонения не обнаружено')
-		return
-	else:
-		file_name = r"C:/DataIAS/Список спортмероприятий (отклонение).xlsx"
-		xls = pd.ExcelFile(file_name)
-		dfx = pd.read_excel(xls, 'Sheet1')
-		# Проверяем, есть ли данные в загруженной таблице
-		if dfx.shape[0] == 0:
-			# Если таблица пустая, просто сохраняем новый DataFrame
-			df.iloc[:, [0, 17]].to_excel(file_name, index=False)
-		else:
-			# Если есть данные, обновляем комментарии, где номера совпадают
-			dfx = dfx.set_index('Реестр №')
-			df = df.set_index('Реестр №')
-			
-			# Объединяем данные: заменяем существующие и добавляем новые
-			dfx.update(df)
-			df_final = pd.concat([dfx, df[~df.index.isin(dfx.index)]])
-			
-			# Сохраняем результат в Excel
-			df_final[[0, 17]].reset_index().to_excel(file_name, index=False)
-		print('Файл обновлен - ', file_name)
-		return
 
 #Сводная функция дял проверки
 def concat_all_report(df, excel_file_path):
@@ -90,10 +66,9 @@ def save_file_DataIAS(name_file):
 	concat_all_report(df, excel_file_path)
 	dfiascontrol = load_dfiascontrol(excel_file_path)
 	# Фильтрация строк, где поле 'Комментарий IASControl' не пустое
-	df_deviation= dfiascontrol[dfiascontrol['IASControl'].notna() & (dfiascontrol['IASControl'] != '')]
-	#Заполняем список для отклонения
-	chek_file_deviation(df_deviation)
+	#df_deviation= dfiascontrol[dfiascontrol['IASControl'].notna() & (dfiascontrol['IASControl'] != '')]
 	#Заполняем файл файл для соглосования.
 	df_unique = dfiascontrol[dfiascontrol['IASControl'].isna() | (dfiascontrol['IASControl'] == '')]
 	chek_file_save(df_unique, name_file)
-	return df_unique
+	os.startfile(excel_file_path)
+	return 

@@ -69,8 +69,10 @@ def calendar_typefin(typefin_list=None):
         driver.implicitly_wait(10)
         time.sleep(1)
         for typefin in typefin_list:
-            driver.find_element(By.XPATH,f"//label[contains(text(),'{typefin}')]").click()
+            time.sleep(1)
             driver.implicitly_wait(5)
+            driver.find_element(By.XPATH,f"//label[contains(text(),'{typefin}')]").click()
+            time.sleep(3)
     else:
         return
 
