@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 Test_report.ipynb
+*.ipynb
 *.xlsx
 
 # Jupyter notebook checkpoints

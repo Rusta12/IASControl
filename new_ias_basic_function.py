@@ -36,8 +36,7 @@ def filter_button(razdel='заявки'):
       driver.find_element(By.XPATH, "//app-events-app-section-header/form[1]/div[2]/div[2]/app-filters-button[1]/div[1]/button[1]").click()
       return
    elif razdel == 'мероприятия':
-      #driver.find_element(By.XPATH, "//app-events-section-header/form[1]/div[2]/div[2]/app-filters-button[1]/div[1]/button[1]").click()
-      driver.find_element(By.XPATH, '//button[@class="mat-menu-trigger filters-button"]').click()
+      driver.find_element(By.XPATH, '//button[@class="mat-mdc-menu-trigger filters-button"]').click()
       return
 
    #Очистка фильтров
@@ -208,36 +207,28 @@ def agree_event(name_agree, comment=''):
    driver.find_element(By.XPATH, 
       "//body/app-root[1]/app-sections[1]/app-events-section-card[1]/div[1]/app-card[1]/div[1]/div[1]/div[1]/a[2]/span[1]").click()
    driver.implicitly_wait(30)
-   coordination = driver.find_element(By.XPATH, 
-      "//body/div[3]/div[2]/div[1]/mat-dialog-container[1]/app-events-section-modal-edit-app-status[1]/app-modal-container[1]/div[1]/div[2]/form[1]/div[1]/ng-select[1]/div[1]/div[1]/div[2]/input[1]")
+   time.sleep(1)
+   coordination = driver.find_element(By.XPATH, "//div[@class='ng-input']/input[@role='combobox']")
    coordination.click()
    driver.implicitly_wait(10)
    coordination.find_element(By.XPATH, f"//span[contains(text(),'{name_agree}')]").click()
    driver.implicitly_wait(10)
-   element = driver.find_element(By.XPATH, "//body/div[3]/div[2]/div[1]/mat-dialog-container[1]/app-events-section-modal-edit-app-status[1]/app-modal-container[1]/div[1]/div[2]/form[1]/div[2]/textarea[1]")
-   element.click()
-   element.send_keys(comment)
-   """
-   if driver.find_element(By.XPATH, '//*[@formcontrolname="archiveDate"]'):
-      element = driver.find_element(By.XPATH, '//*[@formcontrolname="archiveDate"]')
+   textarea_element = driver.find_element(By.XPATH, "//textarea[@formcontrolname='comment' and contains(@class, 'form-element')]")
+   textarea_element.click()
+   textarea_element.send_keys(comment)
+   try:
+      archive_date_element = driver.find_element(By.XPATH, '//*[@formcontrolname="archiveDate"]')
       current_date = datetime.now().strftime("%d.%m.%Y")
-      element.click()
-      element.send_keys(current_date)
-      #element.send_keys(Keys.ENTER)
-      driver.implicitly_wait(30)
+      archive_date_element.click()
+      archive_date_element.send_keys(current_date)
       time.sleep(2)
-      element = driver.find_element(By.XPATH, '//body/div[3]/div[2]/div[1]/mat-dialog-container[1]/app-events-section-modal-edit-app-status[1]/app-modal-container[1]/div[1]/div[2]/form[1]/div[7]/ng-select[1]/div[1]/div[1]/div[2]/input[1]')
-      element.click()
-      element.send_keys(comment)
-      element.send_keys(Keys.ENTER)
-   else:
-      pass
-   """
+   except NoSuchElementException:
+               # Если элемент "archiveDate" отсутствует, пропускаем этот блок
+               pass
    end_coordination = driver.find_element(By.XPATH, "//button[contains(text(),'Сохранить')]")
    end_coordination.send_keys(Keys.ENTER)
    time.sleep(1)
    return
-
 
 #Возврат в меню поиска
 def back_list_main():
@@ -248,10 +239,12 @@ def back_list_main():
 
 #Соглосование участия
 def agree_paty():
-   driver.find_element(By.XPATH, "//mat-tab-header/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]").click()
-   time.sleep(5)
+   #driver.find_element(By.XPATH, "//mat-tab-header/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]").click()
+   driver.find_element(By.XPATH, "//mat-tab-header/div[2]/div[1]/div[1]/div[3]/span[2]/span[1]/div[1]/div[1]").click()
+   time.sleep(5)                  
    driver.implicitly_wait(50)
-   elements_button = driver.find_elements(By.CLASS_NAME, "mat-menu-trigger")
+   #elements_button = driver.find_elements(By.CLASS_NAME, "mat-menu-trigger")
+   elements_button = driver.find_elements(By.CLASS_NAME, "section-card-item-table ng-star-inserted")
    elements_text = driver.find_elements(By.XPATH, "//tbody[@class='ng-star-inserted']")
    print(len(elements_button))
    text =''
@@ -260,7 +253,7 @@ def agree_paty():
    pattern = re.compile(r'\(утверждена\)|\(на согласование\)|\(проект\)|\(архив\)')
    values_in_brackets =re.findall(pattern, text)
    for idx, value in enumerate(values_in_brackets, 0):
-      print(idx, value)
+      print(idx)
       if value == '(на согласование)':
          el_status = idx
          driver.execute_script("window.scrollTo(0, 5000)")

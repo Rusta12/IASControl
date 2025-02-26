@@ -5,9 +5,12 @@ from validators.collectiv_def import input_report_text, search_open
 from validators.collectiv_def import search_region, IASControl_comment
 from validators.collectiv_def import search_status, search_festival
 from validators.collectiv_def import search_outdoors, search_students
+from validators.collectiv_def import load_dfiascontrol
+
 
 #Поиск по открытым наименованияммероприятий
-def filtred_open_events(df, excel_file_path):
+def filtred_open_events(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
     name_event = '|'.join(search_open)
     name_region = '|'.join(search_region)
     df_filtered = df[
@@ -19,7 +22,8 @@ def filtred_open_events(df, excel_file_path):
     return
 
 #Поиск по статусам и наименованиям не для Москвы
-def filtred_status_events(df, excel_file_path):
+def filtred_status_events(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
     name_status = '|'.join(search_status)
     name_region = '|'.join(search_region)
     df_filtered = df[
@@ -31,7 +35,8 @@ def filtred_status_events(df, excel_file_path):
     return
 
 #Поиск по наименованиям студентческие мероприятия
-def filtred_students_events(df, excel_file_path):
+def filtred_students_events(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
     name_students = '|'.join(search_students)
     df_filtered = df[
         df['Наименование мероприятия'].str.contains(name_students, case=False, na=False)
@@ -41,7 +46,8 @@ def filtred_students_events(df, excel_file_path):
     return
 
 #Поиск по наименованию фестевальных мероприятий
-def filtred_festival_events(df, excel_file_path):
+def filtred_festival_events(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
     name_festival = '|'.join(search_festival)
     name_region = '|'.join(search_region)
     df_filtered = df[
@@ -54,7 +60,8 @@ def filtred_festival_events(df, excel_file_path):
 
 
 #Поиск мероприятий на дворовой территории
-def filtred_outdoors_events(df, excel_file_path):
+def filtred_outdoors_events(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
     name_pattern = '|'.join(search_outdoors)
     df_filtered = df[
         df['Место проведения'].str.contains(name_pattern, case=False, na=False) 
@@ -67,7 +74,8 @@ def filtred_outdoors_events(df, excel_file_path):
     return
 
 #Поиск мероприятий где организатор Москомспорт
-def filtred_mks_events(df, excel_file_path):
+def filtred_mks_events(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
     name_pattern = 'Москомспорт.'
     df_filtered = df[
         df['Состав организаторов'].str.contains(name_pattern, case=False, na=False) &
@@ -79,12 +87,12 @@ def filtred_mks_events(df, excel_file_path):
     return
 
 #Общая проверка по отвественным.
-def triggers_main_concat(df, excel_file_path):
-    filtred_open_events(df, excel_file_path)
-    filtred_status_events(df, excel_file_path)
-    filtred_students_events(df, excel_file_path)
-    filtred_festival_events(df, excel_file_path)
-    filtred_outdoors_events(df, excel_file_path)
-    filtred_mks_events(df, excel_file_path)
+def triggers_main_concat(excel_file_path):
+    filtred_open_events(excel_file_path)
+    filtred_status_events(excel_file_path)
+    filtred_students_events(excel_file_path)
+    filtred_festival_events(excel_file_path)
+    filtred_outdoors_events(excel_file_path)
+    filtred_mks_events(excel_file_path)
     print('Общая проверка по триггерам успешно пройдена!')
     return

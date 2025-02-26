@@ -4,9 +4,10 @@ import re
 from validators.collectiv_def import input_report_text, search_open
 from validators.collectiv_def import search_region, IASControl_comment
 from validators.collectiv_def import search_status_check, search_status_world
+from validators.collectiv_def import load_dfiascontrol
 
-
-def filtred_event_name_status(df, excel_file_path):
+def filtred_event_name_status(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
     name_status = '|'.join(search_status_check)
     name_region = '|'.join(search_region)
     df_filtered = df[
@@ -18,7 +19,8 @@ def filtred_event_name_status(df, excel_file_path):
     input_report_text(df_filtered, excel_file_path, report_text)
     return
 
-def filtred_event_world(df, excel_file_path):
+def filtred_event_world(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
     name_status = '|'.join(search_status_world)
     name_region = '|'.join(search_region)
     df_filtered = df[
@@ -30,8 +32,8 @@ def filtred_event_world(df, excel_file_path):
     return
 
 #Общая проверка по отвественным.
-def status_main_concat(df, excel_file_path):
-    filtred_event_name_status(df, excel_file_path)
-    filtred_event_world(df, excel_file_path)
+def status_main_concat(excel_file_path):
+    filtred_event_name_status(excel_file_path)
+    filtred_event_world(excel_file_path)
     print('Общая проверка по Статусу успешно пройдена!')
     return
