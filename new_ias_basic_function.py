@@ -239,13 +239,11 @@ def back_list_main():
 
 #Соглосование участия
 def agree_paty():
-   #driver.find_element(By.XPATH, "//mat-tab-header/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]").click()
    driver.find_element(By.XPATH, "//mat-tab-header/div[2]/div[1]/div[1]/div[3]/span[2]/span[1]/div[1]/div[1]").click()
    time.sleep(5)                  
    driver.implicitly_wait(50)
-   #elements_button = driver.find_elements(By.CLASS_NAME, "mat-menu-trigger")
-   elements_button = driver.find_elements(By.CLASS_NAME, "section-card-item-table ng-star-inserted")
-   elements_text = driver.find_elements(By.XPATH, "//tbody[@class='ng-star-inserted']")
+   elements_button = driver.find_elements(By.CLASS_NAME, "mat-mdc-menu-trigger")
+   elements_text = driver.find_elements(By.XPATH, '//tbody[@_ngcontent-ng-c128895339]')
    print(len(elements_button))
    text =''
    for i in elements_text:
@@ -261,7 +259,7 @@ def agree_paty():
          driver.implicitly_wait(50)
          print(el_status)
          elements_button[el_status].click()
-
+         print('Клик сработал')
          button = driver.find_element(By.LINK_TEXT,'Редактировать статус участия')
          button.click()
          driver.implicitly_wait(30)
