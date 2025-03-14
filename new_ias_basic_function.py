@@ -222,6 +222,16 @@ def agree_event(name_agree, comment=''):
       archive_date_element.click()
       archive_date_element.send_keys(current_date)
       time.sleep(2)
+      dropdown = driver.find_element(By.CSS_SELECTOR, "ng-select[formcontrolname='archiveReason']")
+      dropdown.click()
+      driver.implicitly_wait(10)
+      ng_options = driver.find_elements(By.CLASS_NAME, "ng-option")
+      for option in ng_options:
+         if "Отменено по инициативе организатора" in option.text:
+            option.click()
+            print("Элемент найден и выбран.")
+            break
+      time.sleep(2) 
    except NoSuchElementException:
                # Если элемент "archiveDate" отсутствует, пропускаем этот блок
                pass

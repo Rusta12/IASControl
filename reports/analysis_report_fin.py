@@ -102,7 +102,7 @@ def rename_columns(df):
                'Квартал', 'Месяц', 'Пров\Участие', 'Кол-во. уч.', 'Организаторы', 'Тип расходов',
                'План расходов', 'Факт расходов',
                ]
-    df.set_axis(new_df, axis='columns', inplace=True)
+    df = df.set_axis(new_df, axis='columns')
     return df
 
 
@@ -120,7 +120,7 @@ def to_xlsx(df, period, name):
 
 
 def mean_analysis(file_name, period:str, name):
-    df = pd.read_csv(file_name, error_bad_lines=False)
+    df = pd.read_csv(file_name, on_bad_lines='warn')
     df = replace_cost(df)
     df = cor_dates(df, period)
     df['RazdelShool'] = df['CalendarSectionName1'].apply(transform_record)
