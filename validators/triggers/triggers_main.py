@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime, timedelta
 import re
 #Модули
 from validators.collectiv_def import input_report_text, search_open
@@ -6,7 +7,7 @@ from validators.collectiv_def import search_region, IASControl_comment
 from validators.collectiv_def import search_status, search_festival
 from validators.collectiv_def import search_outdoors, search_students
 from validators.collectiv_def import load_dfiascontrol
-
+from validators.collectiv_def import search_razdel_rf
 
 #Поиск по открытым наименованияммероприятий
 def filtred_open_events(excel_file_path):
@@ -86,6 +87,19 @@ def filtred_mks_events(excel_file_path):
     input_report_text(df_filtered, excel_file_path, report_text)
     return
 
+def filtred__upcoming_events(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
+    today = datetime.now().date()
+    name_pattern = '|'.join(search_razdel_rf)
+    df_filtered = df[
+        (today - df['Дата начала'].dt.date >= timedelta(days=14)) & # Исключаем календарь минспорта
+        (~df['Дополнительные календари/разделы'].str.contains(name_pattern, case=False, na=False))  
+    ]
+    report_text = IASControl_comment['triggers'][6]
+    input_report_text(df_filtered, excel_file_path, report_text)
+    return df_filtered
+
+
 #Общая проверка по отвественным.
 def triggers_main_concat(excel_file_path):
     filtred_open_events(excel_file_path)
@@ -94,5 +108,6 @@ def triggers_main_concat(excel_file_path):
     filtred_festival_events(excel_file_path)
     filtred_outdoors_events(excel_file_path)
     filtred_mks_events(excel_file_path)
+    filtred__upcoming_events(excel_file_path)
     print('Общая проверка по триггерам успешно пройдена!')
     return

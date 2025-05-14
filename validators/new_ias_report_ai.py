@@ -13,11 +13,29 @@ def read_report():
 	excel_file_path = r"C:/DataIAS/Список спортмероприятий IASControl.xlsx"
 	xls = pd.ExcelFile(file_name) 
 	df = pd.read_excel(xls, 'Список спортмероприятий')
+	df = parse_dates(df)
+	df['Ссылка'] = 'https://iasnew.sport.mos.ru/events-app/' + df['Id'].astype(str)
 	df['IASControl'] = ''
 	df.to_excel(excel_file_path, index=False)
 	print(f'Файл обновлен - {excel_file_path}')
 	return excel_file_path
 
+#Расширяем даты проведения
+def parse_dates(df):
+    # Создаем новые столбцы
+    df[['Дата начала', 'Дата конца']] = df['Сроки пров.'].str.split(' ', expand=True)
+    # Если есть строки только с одной датой, заполняем 'Дата конца' значением из 'Дата начала'
+    df['Дата конца'] = df['Дата конца'].fillna(df['Дата начала'])
+    # Конвертируем строки в datetime (опционально)
+    df['Дата начала'] = pd.to_datetime(df['Дата начала'], dayfirst=True)
+    df['Дата конца'] = pd.to_datetime(df['Дата конца'], dayfirst=True)
+    #Считаем дни
+    df['Количество дней'] = (df['Дата конца'] - df['Дата начала']).dt.days + 1
+    #Делаем квартал
+    df['Квартал'] = pd.PeriodIndex(df['Дата конца'], freq='Q')
+    #Делаем месяц
+    df['Месяц'] = pd.PeriodIndex(df['Дата конца'], freq='M')
+    return df
 
 def chek_file_save(df, name_file):
 	file_name = fr"C:/DataIAS/Список спортмероприятий ({name_file}).xlsx"

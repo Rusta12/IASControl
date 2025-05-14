@@ -2,16 +2,23 @@ import pandas as pd
 import os
 
 
-folder_path = r'C:\DataIAS'
 expected_files = [
-    'Список спортмероприятий (изменения).xlsx',
+    'Список спортмероприятий (внесение изменений).xlsx',
     'Список спортмероприятий (исключение).xlsx',
     'Список спортмероприятий (исправления).xlsx',
     'Список спортмероприятий (на комиссию).xlsx',
-    'Список спортмероприятий (отклонение).xlsx'
+    'Список спортмероприятий (отклонение).xlsx',
+    'Список спортмероприятий (утверждение).xlsx',
+    'Список спортмероприятий (участие).xlsx',
 ]
 
-def create_missing_files():
+expected_folders = [
+    'CalendarSchoolSportFinans',
+    'CalendarRankSport',
+]
+
+
+def create_missing_files(folder_path='.'):
     """
     Проверяет наличие файлов в папке и создает их, если они отсутствуют.
 
@@ -23,7 +30,7 @@ def create_missing_files():
         if not os.path.exists(file_path):
             print(f"Файл {file} отсутствует, создаём...")
             # Создание пустого DataFrame с заголовками
-            df = pd.DataFrame(columns=["Реестр №", "Комментарий IASControl"])
+            df = pd.DataFrame(columns=["Реестр №", "IASControl"])
             # Сохранение в Excel-файл
             df.to_excel(file_path, index=False)
         else:
@@ -31,3 +38,19 @@ def create_missing_files():
     # Открытие проводника в указанной папке
     os.startfile(folder_path)
     print("Открыт проводник с файлами.")
+
+def create_folders_from_lists(base_path='.'):
+    """
+    Создаёт папки, если они отсутствуют.
+    
+    :param expected_folders: один или несколько списков с названиями папок
+    :param base_path: путь, относительно которого будут созданы папки (по умолчанию текущая директория)
+    """
+    for folder_list in expected_folders:
+        for folder_name in folder_list:
+            folder_path = os.path.join(base_path, folder_name)
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+                print(f"Папка создана: {folder_path}")
+            else:
+                print(f"Папка уже существует: {folder_path}")
