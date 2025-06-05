@@ -52,7 +52,13 @@ def clear_filters(razdel='заявки'):
    return
 
    # Фильтр Календаря
-def filter_application(name_period: int, razdel='заявки'):
+def filter_application(name_period: int, razdel_ekp='2.1', razdel='заявки'):
+   time.sleep(3)
+   if razdel_ekp == '2.1':
+      razdel_ekp_str = "//span[contains(text(),'2.1. Подраздел «Спорт высших достижений и подготов')]"
+   elif razdel_ekp == '2.1.1':
+      razdel_ekp_str = "//span[contains(text(),'2.1.1. Круглосуточное пребывание')]"
+   #elif razdel_ekp == '2.1.2':
    filter_button(razdel)
    time.sleep(1)
    driver.implicitly_wait(10)
@@ -73,8 +79,7 @@ def filter_application(name_period: int, razdel='заявки'):
    element = driver.find_element(By.XPATH, 
       "//body/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/app-calendars[1]/div[1]/form[1]/div[2]/div[3]/ng-select[1]/div[1]/div[1]/div[2]/input[1]")
    element.click()
-   all_options = driver.find_element(By.XPATH, 
-      "//span[contains(text(),'2.1. Подраздел «Спорт высших достижений и подготов')]")
+   all_options = driver.find_element(By.XPATH, razdel_ekp_str)
    all_options.click()
    driver.implicitly_wait(30)
    clearFilter_enter = driver.find_element(By.XPATH, "//button[contains(text(),'Применить')]")

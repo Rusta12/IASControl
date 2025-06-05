@@ -2,7 +2,7 @@ import pandas as pd
 import os
 #Модули
 from validators.responsible.responsible_main import responsible_main_concat 
-from validators.triggers.triggers_main import triggers_main_concat
+from validators.triggers.triggers_main import triggers_main_concat_insert, triggers_main_concat_change
 from validators.status.status_main import status_main_concat
 from validators.sports.sports_main import sports_main_concat
 from validators.collectiv_def import load_dfiascontrol
@@ -57,13 +57,21 @@ def chek_file_save(df, name_file):
 
 
 #Сводная функция дял проверки
-def concat_all_report(excel_file_path):
-	responsible_main_concat(excel_file_path)
-	triggers_main_concat(excel_file_path)
-	status_main_concat(excel_file_path)
-	sports_main_concat(excel_file_path)
-	print('Все проверки пройдены')
-	return
+def concat_all_report(excel_file_path, name_file):
+	if name_file == 'на комиссию':
+		responsible_main_concat(excel_file_path)
+		triggers_main_concat_insert(excel_file_path)
+		status_main_concat(excel_file_path)
+		sports_main_concat(excel_file_path)
+		print('Все проверки пройдены')
+		return
+	elif name_file == 'внесение изменений':
+		responsible_main_concat(excel_file_path)
+		triggers_main_concat_change(excel_file_path)
+		status_main_concat(excel_file_path)
+		sports_main_concat(excel_file_path)
+		print('Все проверки пройдены')
+		return
 
 
 #Сохроняем файлы для обработки в ИАС Спорт
@@ -71,7 +79,7 @@ def save_file_DataIAS(name_file):
 	#Загрузка файла и Сохраняем для анализа в Excel
 	excel_file_path = read_report()
 	#Проверка мероприятий
-	concat_all_report(excel_file_path)
+	concat_all_report(excel_file_path, name_file)
 	dfiascontrol = load_dfiascontrol(excel_file_path)
 	# Фильтрация строк, где поле 'Комментарий IASControl' не пустое
 	df_unique = dfiascontrol[dfiascontrol['IASControl'].isna() | (dfiascontrol['IASControl'] == '')]

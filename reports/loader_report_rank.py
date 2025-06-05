@@ -168,16 +168,16 @@ def save_df_to_csv(df, directory='.', base_filename='RankSport', month=None, yea
     n = df['SportsmenId'].count()
     n = f'{n:,.0f}'.replace(",", " ").replace(".", ",")
     if month and year:
-        filename = f"{base_filename}_{n}_{month:02d}-{year}.csv"
+        filename = f"{month:02d}-{year}_{base_filename}_{n}_.csv"
     elif month is not None:
         current_year = datetime.datetime.now().year
-        filename = f"{base_filename}_{n}_{month:02d}-{current_year}.csv"
+        filename = f"{month:02d}-{current_year}_{base_filename}_{n}_.csv"
     elif year is not None:
-        filename = f"{base_filename}_{n}_31_12-{year}.csv"
+        filename = f"31_12-{year}_{base_filename}_{n}_.csv"
     else:
         current_year = datetime.datetime.now().year
         current_month = datetime.datetime.now().month
-        filename = f"{base_filename}_{n}_{current_month:02d}-{current_year}.csv"
+        filename = f"{current_month:02d}-{current_year}_{base_filename}_{n}_.csv"
 
     filepath = f"{directory}/{filename}"
     df.to_csv(filepath, index=False, sep='\t')

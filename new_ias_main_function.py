@@ -4,7 +4,7 @@ from settings.config import login_b, login_a, pass_b, pass_a
 
 #================== обновленные ===========================================
 #Функция соглосования изменений мероприятий (согласовано ответственным)
-def change_approve(name_period: int, df):
+def change_approve(name_period: int, df, razdel_ekp):
    #========= Вход
    ias.come_application(login_b, pass_b)
    #======== Вход в раздел заявок
@@ -12,7 +12,7 @@ def change_approve(name_period: int, df):
    #======= Фильтр чистка
    ias.clear_filters('заявки')
    #======= Фильтр календаря
-   ias.filter_application(name_period, 'заявки')
+   ias.filter_application(name_period, razdel_ekp, 'заявки')
    #======= Фильтр проверено - изменение
    ias.filter_change('внесение')
    #======= Цикл перебора мероприятий
@@ -20,7 +20,7 @@ def change_approve(name_period: int, df):
    return ias.nan_application 
 
 #Функция отправки мероприятий на комиссию
-def commission_application(name_period: int, df):
+def commission_application(name_period: int, df, razdel_ekp):
    #========= Вход
    ias.come_application(login_b, pass_b)
    #======== Вход в раздел заявок
@@ -28,7 +28,7 @@ def commission_application(name_period: int, df):
    #======= Фильтр чистка
    ias.clear_filters('заявки')
    #======= Фильтр календаря
-   ias.filter_application(name_period, 'заявки')
+   ias.filter_application(name_period, razdel_ekp, 'заявки')
    #======= Фильтр проверено - включение
    ias.filter_change('включение')
    #======= Цикл перебора мероприятий
@@ -75,7 +75,7 @@ def paty_approve(name_period: int, df):
    #======== Чистка фильтров
    ias.clear_filters('мероприятия')
    #======== Фильтр календаря
-   ias.filter_application(name_period, 'мероприятия')
+   ias.filter_application(name_period, razdel='мероприятия')
    #======== Фильтр статуса
    ias.status_sport()
    #======== Фильтр участия на соглосование
@@ -100,7 +100,7 @@ def fix_approve(name_period: int, df, name_agree:str):
    return ias.nan_application
 
 #Функция рассмотрения заявок на исключение
-def except_approve(name_period: int, df):
+def except_approve(name_period: int, df, razdel_ekp):
    #========= Вход
    ias.come_application(login_b, pass_b)
    #======== Вход в раздел заявок
@@ -108,7 +108,7 @@ def except_approve(name_period: int, df):
    #======= Фильтр чистка
    ias.clear_filters('заявки')
    #======= Фильтр календаря
-   ias.filter_application(name_period, 'заявки')
+   ias.filter_application(name_period, razdel_ekp, 'заявки')
    #======= Фильтр проверено - изменение
    ias.filter_change('исключение')
    #======= Цикл перебора мероприятий

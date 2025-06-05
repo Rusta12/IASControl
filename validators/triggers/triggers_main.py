@@ -101,7 +101,7 @@ def filtred__upcoming_events(excel_file_path):
 
 
 #Общая проверка по отвественным.
-def triggers_main_concat(excel_file_path):
+def triggers_main_concat_insert(excel_file_path):
     filtred_open_events(excel_file_path)
     filtred_status_events(excel_file_path)
     filtred_students_events(excel_file_path)
@@ -109,5 +109,15 @@ def triggers_main_concat(excel_file_path):
     filtred_outdoors_events(excel_file_path)
     filtred_mks_events(excel_file_path)
     filtred__upcoming_events(excel_file_path)
+    print('Общая проверка по триггерам успешно пройдена!')
+    return
+
+def triggers_main_concat_change(excel_file_path):
+    filtred_open_events(excel_file_path)
+    filtred_status_events(excel_file_path)
+    filtred_students_events(excel_file_path)
+    filtred_festival_events(excel_file_path)
+    filtred_outdoors_events(excel_file_path)
+    filtred_mks_events(excel_file_path)
     print('Общая проверка по триггерам успешно пройдена!')
     return
