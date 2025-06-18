@@ -66,6 +66,7 @@ def filter_application(name_period: int, razdel_ekp='2.1', razdel='заявки'
    FilterBy.click()
    driver.implicitly_wait(30)
    time.sleep(1)
+   #dataSort = driver.find_element(By.XPATH, "//ng-select[@placeholder='Календарь']")
    dataSort = driver.find_element(By.XPATH, 
       "//body/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/app-calendars[1]/div[1]/form[1]/div[2]/div[2]/ng-select[1]/div[1]/div[1]/div[2]/input[1]")
    dataSort.click()

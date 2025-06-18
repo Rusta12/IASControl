@@ -53,7 +53,7 @@ def commission_approve(name_period: int, df):
 
 
 #Функция отклонений по причине ... 
-def deviation(name_period: int, df):
+def deviation(name_period: int, df, razdel_ekp):
    #========= Вход
    ias.come_application(login_b, pass_b)
    #======== Вход в раздел заявок
@@ -61,7 +61,7 @@ def deviation(name_period: int, df):
    #======= Фильтр чистка
    ias.clear_filters('заявки')
    #======= Фильтр календаря
-   ias.filter_application(name_period, 'заявки')
+   ias.filter_application(name_period, razdel_ekp, 'заявки')
    #======= Фильтр проверено - включение или отклонено
    ias.filter_change('отклонено')
    #======= Цикл перебора мероприятий

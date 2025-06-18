@@ -7,7 +7,7 @@ from validators.collectiv_def import search_region, IASControl_comment
 from validators.collectiv_def import search_status, search_festival
 from validators.collectiv_def import search_outdoors, search_students
 from validators.collectiv_def import load_dfiascontrol
-from validators.collectiv_def import search_razdel_rf
+from validators.collectiv_def import search_razdel_rf, search_debtor_organizer
 
 #Поиск по открытым наименованияммероприятий
 def filtred_open_events(excel_file_path):
@@ -99,8 +99,18 @@ def filtred__upcoming_events(excel_file_path):
     input_report_text(df_filtered, excel_file_path, report_text)
     return df_filtered
 
+def filtred__upcoming_debtor(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
+    name_pattern = '|'.join(search_debtor_organizer)
+    df_filtered = df[
+        df['Состав организаторов'].str.contains(name_pattern, case=False, na=False) 
+    ]
+    report_text = IASControl_comment['triggers'][7]
+    input_report_text(df_filtered, excel_file_path, report_text)
+    return df_filtered
 
-#Общая проверка по отвественным.
+
+#Общая проверка
 def triggers_main_concat_insert(excel_file_path):
     filtred_open_events(excel_file_path)
     filtred_status_events(excel_file_path)
@@ -109,6 +119,7 @@ def triggers_main_concat_insert(excel_file_path):
     filtred_outdoors_events(excel_file_path)
     filtred_mks_events(excel_file_path)
     filtred__upcoming_events(excel_file_path)
+    filtred__upcoming_debtor(excel_file_path)
     print('Общая проверка по триггерам успешно пройдена!')
     return
 
