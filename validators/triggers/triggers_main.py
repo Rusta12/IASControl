@@ -97,7 +97,7 @@ def filtred__upcoming_events(excel_file_path):
     ]
     report_text = IASControl_comment['triggers'][6]
     input_report_text(df_filtered, excel_file_path, report_text)
-    return df_filtered
+    return 
 
 def filtred__upcoming_debtor(excel_file_path):
     df = load_dfiascontrol(excel_file_path)
@@ -107,8 +107,18 @@ def filtred__upcoming_debtor(excel_file_path):
     ]
     report_text = IASControl_comment['triggers'][7]
     input_report_text(df_filtered, excel_file_path, report_text)
-    return df_filtered
+    return 
 
+
+def filtred__empty_dopcol(excel_file_path):
+    df = load_dfiascontrol(excel_file_path)
+    df_filtered = df[df['Дополнительные календари/разделы'].isna()] 
+    if df_filtered.empty:
+        return
+    else:
+        report_text = IASControl_comment['triggers'][8]
+        input_report_text(df_filtered, excel_file_path, report_text)
+        return 
 
 #Общая проверка
 def triggers_main_concat_insert(excel_file_path):
@@ -120,6 +130,7 @@ def triggers_main_concat_insert(excel_file_path):
     filtred_mks_events(excel_file_path)
     filtred__upcoming_events(excel_file_path)
     filtred__upcoming_debtor(excel_file_path)
+    filtred__empty_dopcol(excel_file_path)
     print('Общая проверка по триггерам успешно пройдена!')
     return
 
@@ -130,5 +141,6 @@ def triggers_main_concat_change(excel_file_path):
     filtred_festival_events(excel_file_path)
     filtred_outdoors_events(excel_file_path)
     filtred_mks_events(excel_file_path)
+    filtred__empty_dopcol(excel_file_path)
     print('Общая проверка по триггерам успешно пройдена!')
     return
